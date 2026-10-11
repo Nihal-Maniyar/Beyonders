@@ -281,6 +281,10 @@ export const api = {
       return []
     }
   },
+
+  async transcribeVoice(audioBlob: Blob, interactionId?: string) {
+    return apiClient.transcribeVoice(audioBlob, interactionId)
+  },
 }
 
 export { apiClient }

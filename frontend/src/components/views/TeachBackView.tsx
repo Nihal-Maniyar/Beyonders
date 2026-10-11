@@ -4,6 +4,7 @@ import { Button } from '../common/Button'
 import { Badge } from '../common/Badge'
 import { Callout } from '../common/Callout'
 import { VoicePlayer } from '../common/VoicePlayer'
+import { VoiceInputButton } from '../common/VoiceInputButton'
 import { TeachBackEvaluation, CriterionStatus } from '../../types'
 import { api } from '../../services/api'
 
@@ -72,11 +73,38 @@ export const TeachBackView: React.FC<TeachBackViewProps> = ({
         </ul>
 
         <div style={{ marginBottom: '20px' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '10px',
+              flexWrap: 'wrap',
+              gap: '10px',
+            }}
+          >
+            <label
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontWeight: 600,
+                fontSize: '0.95rem',
+                color: 'var(--color-text-primary)',
+              }}
+            >
+              Your Explanation:
+            </label>
+            <VoiceInputButton
+              label="🎙️ Speak Explanation"
+              onTranscript={(text) => {
+                setExplanation((prev) => (prev ? `${prev} ${text}` : text))
+              }}
+            />
+          </div>
           <textarea
             rows={5}
             value={explanation}
             onChange={(e) => setExplanation(e.target.value)}
-            placeholder="Write your explanation here... (e.g. 'The denominator is the total number of equal parts...')"
+            placeholder="Write or speak your explanation here... (e.g. 'The denominator is the total number of equal parts...')"
             style={{
               width: '100%',
               fontFamily: 'var(--font-body)',

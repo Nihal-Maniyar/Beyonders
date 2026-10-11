@@ -35,7 +35,8 @@ class Settings:
         # Optional Voice integration
         self.elevenlabs_api_key: Optional[str] = os.getenv("ELEVENLABS_API_KEY")
         self.elevenlabs_voice_id: str = os.getenv("ELEVENLABS_VOICE_ID", "21m00Tcm4TlvDq8ikWAM")
-        self.elevenlabs_model_id: str = os.getenv("ELEVENLABS_MODEL_ID", "eleven_monolingual_v1")
+        self.elevenlabs_model_id: str = os.getenv("ELEVENLABS_MODEL_ID", "eleven_flash_v2_5")
+        self.elevenlabs_stt_model_id: str = os.getenv("ELEVENLABS_STT_MODEL_ID", "scribe_v2")
 
     @property
     def has_llm(self) -> bool:
@@ -43,6 +44,10 @@ class Settings:
 
     @property
     def has_tts(self) -> bool:
+        return bool(self.elevenlabs_api_key)
+
+    @property
+    def has_stt(self) -> bool:
         return bool(self.elevenlabs_api_key)
 
 

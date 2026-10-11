@@ -7,7 +7,7 @@ Implements:
 
 from typing import List, Optional
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
@@ -15,7 +15,7 @@ from learnloop.api.v1.deps import get_current_session, get_db
 from learnloop.db.models import LearningSession, VoiceEvent
 from learnloop.services.voice_service import VoiceService
 
-router = APIRouter(prefix="/voice", tags=["Voice Synthesis"])
+router = APIRouter(prefix="/voice", tags=["Voice Synthesis & Transcription"])
 
 
 class VoiceSynthesizeRequest(BaseModel):
@@ -30,6 +30,14 @@ class VoiceSynthesizeResponse(BaseModel):
     mime_type: Optional[str] = None
     duration_ms: int
     fallback_text: str
+    message: str
+    voice_event_id: str
+
+
+class VoiceTranscribeResponse(BaseModel):
+    status: str
+    text: str
+    duration_ms: int
     message: str
     voice_event_id: str
 
@@ -64,6 +72,41 @@ def synthesize_tutor_voice(
         text=payload.text,
         interaction_id=payload.interaction_id,
         voice_id=payload.voice_id,
+    )
+    db.commit()
+    return result
+
+
+@router.post(
+    "/transcribe",
+    response_model=VoiceTranscribeResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def transcribe_student_voice(
+    file: UploadFile = File(..., description="Recorded audio file (e.g. webm, wav, mp3)"),
+    interaction_id: Optional[str] = Form(None, description="Optional tutoring interaction ID"),
+    current_session: LearningSession = Depends(get_current_session),
+    db: Session = Depends(get_db),
+):
+    """Transcribe student spoken speech via server-side ElevenLabs STT proxy.
+
+    Never exposes provider secrets to client. Enforces bounded timeouts,
+    auditing to voice_events (direction='speech_to_text'), and graceful fallback.
+    """
+    audio_bytes = await file.read()
+    if not audio_bytes:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Uploaded audio file cannot be empty.",
+        )
+
+    result = VoiceService.transcribe_speech(
+        db=db,
+        session_id=current_session.id,
+        audio_bytes=audio_bytes,
+        filename=file.filename or "recording.webm",
+        content_type=file.content_type or "audio/webm",
+        interaction_id=interaction_id,
     )
     db.commit()
     return result

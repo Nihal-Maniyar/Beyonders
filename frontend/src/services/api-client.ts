@@ -10,6 +10,7 @@ import {
   V1Attempt,
   V1ProgressSummary,
   V1VoiceResponse,
+  V1VoiceTranscribeResponse,
   V1VoiceEvent,
   V1TutoringInteraction,
   V1Misconception,
@@ -261,6 +262,46 @@ class ApiClient {
         voice_id: voiceId,
       }),
     })
+  }
+
+  async transcribeVoice(audioBlob: Blob, interactionId?: string): Promise<V1VoiceTranscribeResponse> {
+    const formData = new FormData()
+    formData.append('file', audioBlob, 'recording.webm')
+    if (interactionId) {
+      formData.append('interaction_id', interactionId)
+    }
+
+    const url = `${API_V1_BASE}/voice/transcribe`
+    const headers: Record<string, string> = {
+      Accept: 'application/json',
+    }
+    const currentToken = this.getSessionToken()
+    if (currentToken) {
+      headers['Authorization'] = `Bearer ${currentToken}`
+    }
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: formData,
+    })
+
+    if (!response.ok) {
+      let errPayload: { error?: { code?: string; message?: string; details?: unknown[] } } = {}
+      try {
+        errPayload = await response.json()
+      } catch {
+        // Fallback for non-JSON error
+      }
+      const errObj = errPayload.error || {}
+      throw new ApiError(
+        errObj.message || `Speech transcription failed with status ${response.status}`,
+        errObj.code || `HTTP_${response.status}`,
+        errObj.details
+      )
+    }
+
+    return response.json() as Promise<V1VoiceTranscribeResponse>
   }
 
   async getVoiceEvents(): Promise<V1VoiceEvent[]> {

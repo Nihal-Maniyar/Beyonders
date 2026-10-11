@@ -235,6 +235,14 @@ export interface V1VoiceResponse {
   voice_event_id: string
 }
 
+export interface V1VoiceTranscribeResponse {
+  status: 'succeeded' | 'failed' | 'fallback'
+  text: string
+  duration_ms: number
+  message: string
+  voice_event_id: string
+}
+
 export interface V1VoiceEvent {
   id: string
   status: string

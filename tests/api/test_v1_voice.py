@@ -180,3 +180,81 @@ def test_voice_events_audit_and_session_isolation(api_client, auth_header, monke
 
     events_b = api_client.get("/api/v1/voice/events", headers=headers_b).json()
     assert len(events_b) == 0
+
+
+def test_voice_transcribe_fallback_when_credentials_missing(
+    api_client, auth_header, db_session, monkeypatch
+):
+    """Verify that when ELEVENLABS_API_KEY is not set, transcribe returns graceful text fallback without crashing."""
+    monkeypatch.setattr(settings, "elevenlabs_api_key", None)
+
+    fake_audio = b"\x1a\x45\xdf\xa3fake-audio-chunk"
+    files = {"file": ("recording.webm", fake_audio, "audio/webm")}
+    res = api_client.post(
+        "/api/v1/voice/transcribe",
+        files=files,
+        headers=auth_header,
+    )
+    assert res.status_code == 200
+    data = res.json()
+
+    assert data["status"] == "fallback"
+    assert data["text"] == ""
+    assert "no ElevenLabs API key" in data["message"]
+    assert "voice_event_id" in data
+
+    # Verify audit event in DB
+    event = db_session.query(VoiceEvent).filter_by(id=data["voice_event_id"]).first()
+    assert event is not None
+    assert event.direction == "speech_to_text"
+    assert event.status == "failed"
+    assert event.error_code == "VOICE_CREDENTIALS_MISSING"
+
+
+def test_voice_transcribe_success_mocked(api_client, auth_header, db_session, monkeypatch):
+    """Verify that when ElevenLabs STT responds successfully, text is returned and audited."""
+    monkeypatch.setattr(settings, "elevenlabs_api_key", "mock-valid-api-key-12345")
+
+    mock_resp = httpx.Response(
+        200,
+        json={"text": "Thirds are bigger pieces than fifths.", "language_code": "en"},
+        request=httpx.Request("POST", "https://api.elevenlabs.io/v1/speech-to-text"),
+    )
+
+    mock_client = MagicMock()
+    mock_client.__enter__.return_value = mock_client
+    mock_client.post.return_value = mock_resp
+
+    fake_audio = b"\x1a\x45\xdf\xa3fake-audio-chunk"
+    files = {"file": ("recording.webm", fake_audio, "audio/webm")}
+
+    with patch("learnloop.services.voice_service.httpx.Client", return_value=mock_client):
+        res = api_client.post(
+            "/api/v1/voice/transcribe",
+            files=files,
+            headers=auth_header,
+        )
+        assert res.status_code == 200
+        data = res.json()
+
+        assert data["status"] == "succeeded"
+        assert data["text"] == "Thirds are bigger pieces than fifths."
+        assert data["duration_ms"] >= 0
+
+        # Verify audit event in DB
+        event = db_session.query(VoiceEvent).filter_by(id=data["voice_event_id"]).first()
+        assert event is not None
+        assert event.direction == "speech_to_text"
+        assert event.status == "succeeded"
+        assert event.error_code is None
+
+
+def test_voice_transcribe_empty_file_rejected(api_client, auth_header):
+    """Verify that uploading an empty audio file returns 400 Bad Request."""
+    files = {"file": ("recording.webm", b"", "audio/webm")}
+    res = api_client.post(
+        "/api/v1/voice/transcribe",
+        files=files,
+        headers=auth_header,
+    )
+    assert res.status_code == 400

@@ -155,3 +155,127 @@ class VoiceService:
                 "message": f"Voice synthesis error ({str(exc)[:50]}). Displaying tutor text.",
                 "voice_event_id": event.id,
             }
+
+    MAX_STT_TIMEOUT_SECONDS: float = 10.0
+
+    @classmethod
+    def transcribe_speech(
+        cls,
+        db: Session,
+        session_id: str,
+        audio_bytes: bytes,
+        filename: str = "recording.webm",
+        content_type: str = "audio/webm",
+        interaction_id: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """Transcribe student spoken response via ElevenLabs Speech-to-Text proxy.
+
+        Enforces operational auditing into `voice_events` table (direction="speech_to_text"),
+        bounded timeouts (max 10s), and graceful fallback if credentials are absent or upstream fails.
+        """
+        # 1. Audit log: record initial requested event
+        event = VoiceEvent(
+            session_id=session_id,
+            interaction_id=interaction_id,
+            provider="elevenlabs",
+            direction="speech_to_text",
+            status="requested",
+            created_at=utc_now(),
+        )
+        db.add(event)
+        db.flush()
+
+        # 2. Check if credentials are configured
+        if not settings.elevenlabs_api_key:
+            event.status = "failed"
+            event.duration_ms = 0
+            event.error_code = "VOICE_CREDENTIALS_MISSING"
+            db.flush()
+            return {
+                "status": "fallback",
+                "text": "",
+                "duration_ms": 0,
+                "message": "Speech-to-text unavailable: no ElevenLabs API key configured. Please type your answer.",
+                "voice_event_id": event.id,
+            }
+
+        # 3. Call ElevenLabs STT API
+        start_time = time.monotonic()
+        api_url = "https://api.elevenlabs.io/v1/speech-to-text"
+        headers = {
+            "xi-api-key": settings.elevenlabs_api_key,
+        }
+        files = {
+            "file": (filename, audio_bytes, content_type),
+        }
+        data = {
+            "model_id": settings.elevenlabs_stt_model_id,
+        }
+
+        try:
+            with httpx.Client(timeout=cls.MAX_STT_TIMEOUT_SECONDS) as client:
+                resp = client.post(api_url, files=files, data=data, headers=headers)
+                elapsed_ms = int((time.monotonic() - start_time) * 1000)
+
+                if resp.status_code == 200:
+                    result_json = resp.json()
+                    transcript_text = result_json.get("text", "").strip()
+                    event.status = "succeeded"
+                    event.duration_ms = elapsed_ms
+                    event.error_code = None
+                    db.flush()
+
+                    return {
+                        "status": "succeeded",
+                        "text": transcript_text,
+                        "duration_ms": elapsed_ms,
+                        "message": "Speech transcribed successfully.",
+                        "voice_event_id": event.id,
+                    }
+                else:
+                    error_code = (
+                        "QUOTA_EXCEEDED"
+                        if resp.status_code == 429
+                        else f"UPSTREAM_HTTP_{resp.status_code}"
+                    )
+                    event.status = "failed"
+                    event.duration_ms = elapsed_ms
+                    event.error_code = error_code
+                    db.flush()
+
+                    return {
+                        "status": "fallback",
+                        "text": "",
+                        "duration_ms": elapsed_ms,
+                        "message": f"Speech transcription error ({error_code}). Please type your answer.",
+                        "voice_event_id": event.id,
+                    }
+
+        except httpx.TimeoutException:
+            elapsed_ms = int((time.monotonic() - start_time) * 1000)
+            event.status = "failed"
+            event.duration_ms = elapsed_ms
+            event.error_code = "VOICE_TIMEOUT"
+            db.flush()
+
+            return {
+                "status": "fallback",
+                "text": "",
+                "duration_ms": elapsed_ms,
+                "message": "Speech transcription timed out. Please type your answer.",
+                "voice_event_id": event.id,
+            }
+        except Exception as exc:
+            elapsed_ms = int((time.monotonic() - start_time) * 1000)
+            event.status = "failed"
+            event.duration_ms = elapsed_ms
+            event.error_code = "VOICE_NETWORK_ERROR"
+            db.flush()
+
+            return {
+                "status": "fallback",
+                "text": "",
+                "duration_ms": elapsed_ms,
+                "message": f"Speech transcription error ({str(exc)[:50]}). Please type your answer.",
+                "voice_event_id": event.id,
+            }

@@ -5,6 +5,7 @@ import { Badge } from '../common/Badge'
 import { Callout } from '../common/Callout'
 import { FractionCompare } from '../visuals/FractionCompare'
 import { VoicePlayer } from '../common/VoicePlayer'
+import { VoiceInputButton } from '../common/VoiceInputButton'
 import { DiagnosisResult } from '../../types'
 import { api } from '../../services/api'
 
@@ -115,23 +116,38 @@ export const PracticeView: React.FC<PracticeViewProps> = ({
 
         {/* Reasoning explanation input */}
         <div style={{ marginBottom: '20px' }}>
-          <label
+          <div
             style={{
-              display: 'block',
-              fontFamily: 'var(--font-display)',
-              fontWeight: 600,
-              fontSize: '0.95rem',
-              color: 'var(--color-text-primary)',
-              marginBottom: '6px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '8px',
+              flexWrap: 'wrap',
+              gap: '8px',
             }}
           >
-            Explain your mathematical reasoning:
-          </label>
+            <label
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontWeight: 600,
+                fontSize: '0.95rem',
+                color: 'var(--color-text-primary)',
+              }}
+            >
+              Explain your mathematical reasoning:
+            </label>
+            <VoiceInputButton
+              label="🎙️ Speak Reasoning"
+              onTranscript={(text) => {
+                setReasoningText((prev) => (prev ? `${prev} ${text}` : text))
+              }}
+            />
+          </div>
           <textarea
             rows={3}
             value={reasoningText}
             onChange={(e) => setReasoningText(e.target.value)}
-            placeholder="e.g., 'I chose 2/3 because thirds are bigger pieces than fifths...' or 'I chose 2/5 because 5 is bigger than 3...'"
+            placeholder="Write or speak your reasoning... (e.g. 'I chose 2/3 because thirds are bigger pieces than fifths...' or 'I chose 2/5 because 5 is bigger than 3...')"
             style={{
               width: '100%',
               fontFamily: 'var(--font-body)',
