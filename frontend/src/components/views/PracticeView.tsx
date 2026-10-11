@@ -4,6 +4,7 @@ import { Button } from '../common/Button'
 import { Badge } from '../common/Badge'
 import { Callout } from '../common/Callout'
 import { FractionCompare } from '../visuals/FractionCompare'
+import { VoicePlayer } from '../common/VoicePlayer'
 import { DiagnosisResult } from '../../types'
 import { api } from '../../services/api'
 
@@ -165,6 +166,11 @@ export const PracticeView: React.FC<PracticeViewProps> = ({
             <h4 style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', marginBottom: '12px' }}>
               🧠 Diagnostic Assessment Result
             </h4>
+
+            <VoicePlayer
+              text={diagnosis.student_feedback + (diagnosis.clarifying_question ? ' ' + diagnosis.clarifying_question : '')}
+              label="Listen to Tutor Feedback"
+            />
 
             {diagnosis.is_correct ? (
               <Callout type="success" title="Correct Answer & Valid Thinking!">

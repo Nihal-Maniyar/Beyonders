@@ -5,6 +5,7 @@ import { Badge } from '../common/Badge'
 import { Callout } from '../common/Callout'
 import { FractionBar } from '../visuals/FractionBar'
 import { FractionCompare } from '../visuals/FractionCompare'
+import { VoicePlayer } from '../common/VoicePlayer'
 
 export interface LessonViewProps {
   onProceedToPractice: () => void
@@ -58,6 +59,10 @@ export const LessonView: React.FC<LessonViewProps> = ({ onProceedToPractice }) =
           subtitle="Understanding numerator and denominator roles, and why equal-sized parts are mandatory."
           badge={<Badge variant="concept">Foundation</Badge>}
         >
+          <VoicePlayer
+            text="A fraction represents equal parts of a whole. The top number, called the numerator, tells how many equal parts you have. The bottom number, called the denominator, tells the total number of equal parts dividing the whole."
+            label="Listen to Lesson Explanation"
+          />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px', margin: '16px 0' }}>
             <div style={{ background: '#f8fafc', padding: '16px', borderRadius: 'var(--radius-md)', border: '1px solid #e2e8f0' }}>
               <h4 style={{ color: 'var(--color-numerator)', fontFamily: 'var(--font-display)', marginBottom: '6px' }}>

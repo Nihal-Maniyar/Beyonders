@@ -3,6 +3,7 @@ import { Card } from '../common/Card'
 import { Button } from '../common/Button'
 import { Badge } from '../common/Badge'
 import { Callout } from '../common/Callout'
+import { VoicePlayer } from '../common/VoicePlayer'
 import { TeachBackEvaluation, CriterionStatus } from '../../types'
 import { api } from '../../services/api'
 
@@ -118,6 +119,11 @@ export const TeachBackView: React.FC<TeachBackViewProps> = ({
                 </Badge>
               </div>
             </div>
+
+            <VoicePlayer
+              text={evaluation.overall_feedback}
+              label="Listen to Evaluation Feedback"
+            />
 
             <Callout
               type={evaluation.earned_points >= 3.5 ? 'success' : 'socratic'}

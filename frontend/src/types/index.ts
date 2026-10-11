@@ -152,3 +152,115 @@ export interface ReviewTask {
   due_at: string
   status: 'due' | 'completed'
 }
+
+// API v1 Types
+export interface V1Session {
+  id: string
+  token?: string
+  stage: string
+  created_at?: string
+  expires_at?: string
+}
+
+export interface V1LessonConcept {
+  id: string
+  code: string
+  name: string
+  description?: string
+}
+
+export interface V1Lesson {
+  id: string
+  code: string
+  title: string
+  sequence_no: number
+  description?: string
+  concepts?: V1LessonConcept[]
+}
+
+export interface V1Option {
+  id: string
+  option_key: string
+  option_text: string
+}
+
+export interface V1Question {
+  id: string
+  code?: string
+  prompt: string
+  question_type: string
+  options: V1Option[]
+}
+
+export interface V1Assessment {
+  id: string
+  code: string
+  title: string
+  assessment_type: string
+  version: number
+  questions: V1Question[]
+}
+
+export interface V1Attempt {
+  id: string
+  assessment_id: string
+  attempt_no: number
+  status: string
+  raw_score?: number
+  max_score?: number
+}
+
+export interface V1ProgressConcept {
+  concept_code: string
+  name: string
+  status: string
+}
+
+export interface V1ProgressSummary {
+  session_id: string
+  current_stage: string
+  pre_assessment_score: number | null
+  post_assessment_score: number | null
+  growth_delta: number | null
+  concepts: V1ProgressConcept[]
+}
+
+export interface V1VoiceResponse {
+  status: 'succeeded' | 'fallback'
+  audio_base64: string | null
+  mime_type: string | null
+  duration_ms: number
+  fallback_text: string
+  message: string
+  voice_event_id: string
+}
+
+export interface V1VoiceEvent {
+  id: string
+  status: string
+  direction: string
+  duration_ms: number | null
+  error_code: string | null
+  created_at: string
+}
+
+export interface V1TutoringInteraction {
+  id: string
+  sequence_no: number
+  role: 'student' | 'tutor' | 'system'
+  interaction_type: string
+  content: string
+  created_at: string
+}
+
+export interface V1Misconception {
+  id: string
+  code: string
+  concept_code: string | null
+  description: string
+  confidence: number | null
+  status: string
+  evidence_answer_id?: string | null
+  created_at: string
+  updated_at?: string | null
+}
