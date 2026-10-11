@@ -10,3 +10,4 @@ frontend/dist/
 !*.example
 data_storage/
 *.db
+

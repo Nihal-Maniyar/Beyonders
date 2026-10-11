@@ -209,3 +209,4 @@ To deploy changes made to the repository:
 1. Push commits to your deployed GitHub branch (`main` or `feature/learnloop-v1-foundation`).
 2. If your PaaS provider has **Auto-Deploy** enabled, it will automatically rebuild and deploy within 1–2 minutes.
 3. If auto-deploy is disabled, click **Manual Deploy &rarr; Deploy Latest Commit** in your provider dashboard.
+
