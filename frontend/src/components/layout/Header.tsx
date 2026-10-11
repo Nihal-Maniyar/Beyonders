@@ -17,8 +17,8 @@ export const Header: React.FC<HeaderProps> = ({
     <header
       style={{
         backgroundColor: '#ffffff',
-        borderBottom: '1px solid var(--color-border)',
-        boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.05)',
+        borderBottom: '1.5px solid var(--color-border)',
+        boxShadow: '0 1px 4px 0 rgba(24, 34, 56, 0.04)',
         position: 'sticky',
         top: 0,
         zIndex: 40,
@@ -26,7 +26,7 @@ export const Header: React.FC<HeaderProps> = ({
     >
       <div
         style={{
-          maxWidth: '1280px',
+          maxWidth: '1600px',
           margin: '0 auto',
           padding: '12px 24px',
           display: 'flex',
@@ -37,7 +37,7 @@ export const Header: React.FC<HeaderProps> = ({
         }}
       >
         {/* Brand */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
           <div
             style={{
               width: '42px',
@@ -48,7 +48,7 @@ export const Header: React.FC<HeaderProps> = ({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '1.5rem',
+              fontSize: '1.4rem',
               boxShadow: 'var(--shadow-tactile)',
             }}
           >
@@ -70,37 +70,39 @@ export const Header: React.FC<HeaderProps> = ({
               <Badge variant="brand" size="sm">Fractions Studio</Badge>
             </div>
             <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', margin: 0 }}>
-              Adaptive Misconception Detector · Grade 4–6
+              Adaptive Mathematics Tutor · Grade 4–6
             </p>
           </div>
         </div>
 
-        {/* Center / Standard pill */}
+        {/* Center Standards & Quality Badges */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Badge variant="concept" size="sm">CCSS.MATH.4.NF.A.2</Badge>
-          <Badge variant="neutral" size="sm">Human-Verified Bank</Badge>
+          <Badge variant="success" size="sm">Deterministic Engine</Badge>
+          <Badge variant="neutral" size="sm">Zero Credentials Required</Badge>
         </div>
 
         {/* Right Student controls */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <span style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', fontWeight: 600 }}>
-              Learner:
+              Student:
             </span>
             <input
               type="text"
               value={studentName}
               onChange={(e) => onStudentNameChange(e.target.value)}
-              placeholder="Your Name"
+              placeholder="Name"
               style={{
                 fontFamily: 'var(--font-display)',
                 fontWeight: 600,
                 fontSize: '0.9rem',
-                padding: '4px 10px',
+                padding: '6px 12px',
                 borderRadius: 'var(--radius-sm)',
                 border: '1.5px solid var(--color-border)',
                 outline: 'none',
-                width: '120px',
+                width: '110px',
+                backgroundColor: 'var(--color-canvas)',
               }}
             />
           </div>

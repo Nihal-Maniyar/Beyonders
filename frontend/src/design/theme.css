@@ -1,69 +1,81 @@
 /* LearnLoop AI — Interactive Fractions Studio Design System */
 
 :root {
-  /* Color Tokens */
-  --color-canvas: #f8fafc;
+  /* Warm Cream & Peach Educational Palette */
+  --color-canvas: #fbf9f5;
   --color-surface: #ffffff;
-  --color-surface-hover: #f1f5f9;
-  --color-border: #e2e8f0;
-  --color-border-subtle: #cbd5e1;
+  --color-surface-warm: #fffdfa;
+  --color-surface-hover: #f7f3ed;
+  --color-border: #ede4d8;
+  --color-border-subtle: #ded3c3;
 
-  /* Typography Colors */
-  --color-text-primary: #0f172a;
-  --color-text-secondary: #475569;
-  --color-text-muted: #64748b;
+  /* Typography Colors - Deep Navy */
+  --color-text-primary: #182238;
+  --color-text-secondary: #3b4763;
+  --color-text-muted: #6b7794;
   --color-text-inverse: #ffffff;
 
-  /* Brand / Interactive */
-  --color-brand: #2563eb;
-  --color-brand-hover: #1d4ed8;
-  --color-brand-active: #1e40af;
-  --color-brand-light: #eff6ff;
-  --color-brand-border: #bfdbfe;
+  /* Brand / Peach & Soft Orange Accents */
+  --color-brand: #ff6f43;
+  --color-brand-hover: #f05e32;
+  --color-brand-active: #d94a1f;
+  --color-brand-light: #fff2ed;
+  --color-brand-border: #ffd5c4;
+
+  /* Secondary Accent - Warm Amber */
+  --color-accent-warm: #f59e0b;
+  --color-accent-warm-light: #fef3c7;
+  --color-accent-warm-border: #fde68a;
 
   /* Math & Pedagogical Palette */
-  --color-numerator: #d97706;
-  --color-numerator-bg: #fef3c7;
-  --color-numerator-border: #fcd34d;
+  --color-numerator: #e06a14;
+  --color-numerator-bg: #fff4ea;
+  --color-numerator-border: #fed5b5;
 
   --color-denominator: #0284c7;
   --color-denominator-bg: #e0f2fe;
   --color-denominator-border: #bae6fd;
 
   --color-success: #059669;
-  --color-success-bg: #d1fae5;
+  --color-success-bg: #ecfdf5;
   --color-success-border: #a7f3d0;
   --color-success-dark: #065f46;
 
   --color-misconception: #e11d48;
-  --color-misconception-bg: #ffe4e6;
+  --color-misconception-bg: #fff1f2;
   --color-misconception-border: #fecdd3;
   --color-misconception-dark: #9f1239;
 
   --color-socratic: #7c3aed;
-  --color-socratic-bg: #ede9fe;
+  --color-socratic-bg: #f5f3ff;
   --color-socratic-border: #ddd6fe;
   --color-socratic-dark: #5b21b6;
 
   --color-warning: #ea580c;
-  --color-warning-bg: #ffedd5;
-  --color-warning-border: #fed7aa;
+  --color-warning-bg: #fff7ed;
+  --color-warning-border: #ffedd5;
+
+  /* Soft Blue for Information States */
+  --color-info-bg: #eff6ff;
+  --color-info-border: #bfdbfe;
+  --color-info-text: #1d4ed8;
 
   /* Typography Stacks */
-  --font-display: 'Fredoka', cursive, sans-serif;
-  --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  --font-math: 'JetBrains Mono', monospace;
+  --font-display: 'Fredoka', 'Quicksand', cursive, system-ui, sans-serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-math: 'JetBrains Mono', 'Courier New', monospace;
 
   /* Elevation & Shadows */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.08);
-  --shadow-tactile: 0 4px 0 rgba(0, 0, 0, 0.08);
+  --shadow-sm: 0 1px 3px 0 rgba(24, 34, 56, 0.04);
+  --shadow-md: 0 4px 10px -1px rgba(24, 34, 56, 0.06), 0 2px 4px -2px rgba(24, 34, 56, 0.04);
+  --shadow-lg: 0 12px 24px -4px rgba(24, 34, 56, 0.08), 0 4px 6px -4px rgba(24, 34, 56, 0.04);
+  --shadow-tactile: 0 4px 0 rgba(24, 34, 56, 0.08);
 
   /* Radii */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
   --radius-full: 9999px;
 
   /* Transitions */
@@ -98,7 +110,7 @@ code, kbd, samp, pre, .font-math {
 /* Card utility */
 .card-base {
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  border: 1.5px solid var(--color-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   transition: box-shadow var(--transition-normal), border-color var(--transition-normal);
@@ -106,6 +118,11 @@ code, kbd, samp, pre, .font-math {
 
 .card-base:hover {
   border-color: var(--color-border-subtle);
+}
+
+.card-warm {
+  background: linear-gradient(180deg, #ffffff 0%, var(--color-surface-warm) 100%);
+  border: 1.5px solid var(--color-border);
 }
 
 /* Fraction Notation */
@@ -127,4 +144,26 @@ code, kbd, samp, pre, .font-math {
 
 .fraction-inline .den {
   padding-top: 2px;
+}
+
+/* Tactile button animations */
+.btn-tactile:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: none !important;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 220ms ease-out forwards;
 }

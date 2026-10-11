@@ -1,5 +1,4 @@
-"""Automated UI tests for LearnLoop AI Streamlit application workflow (Phase 4)."""
-
+from pathlib import Path
 from streamlit.testing.v1 import AppTest
 
 from learnloop.content.loader import FIXED_ASSESSMENT_QUESTION_IDS, get_content_bank
@@ -7,10 +6,12 @@ from learnloop.db.session import get_db_session
 from learnloop.repositories.assessments import AssessmentRepository
 from learnloop.services.assessment_service import AssessmentService
 
+APP_PATH = str(Path(__file__).resolve().parent.parent.parent / "app.py")
+
 
 def test_app_starts_without_uncaught_exceptions():
     """Requirement 1 & 2: App imports and starts without exception; welcome screen renders."""
-    at = AppTest.from_file("app.py")
+    at = AppTest.from_file(APP_PATH)
     at.run()
     assert not at.exception
     assert at.session_state.current_stage == "WELCOME"
@@ -21,7 +22,7 @@ def test_app_starts_without_uncaught_exceptions():
 
 def test_pre_assessment_progression_and_persistence():
     """Requirements 3, 4, 5, 6: Pre-assessment advances through 6 items and completes."""
-    at = AppTest.from_file("app.py")
+    at = AppTest.from_file(APP_PATH)
     at.run()
 
     # Step 1: Click start baseline assessment
@@ -56,7 +57,7 @@ def test_pre_assessment_progression_and_persistence():
 
 def test_practice_diagnostic_conversation():
     """Requirements 7 & 8: Practice answers trigger diagnosis and clarification."""
-    at = AppTest.from_file("app.py")
+    at = AppTest.from_file(APP_PATH)
     at.run()
 
     # Navigate to PRACTICE stage
@@ -77,7 +78,7 @@ def test_practice_diagnostic_conversation():
 
 def test_teach_back_submission_and_feedback():
     """Requirements 9 & 10: Teach-back submission produces rubric evaluation and revision advice."""
-    at = AppTest.from_file("app.py")
+    at = AppTest.from_file(APP_PATH)
     at.run()
 
     at.session_state.current_stage = "TEACH_BACK"
@@ -104,7 +105,7 @@ def test_teach_back_submission_and_feedback():
 
 def test_post_assessment_and_progress_report():
     """Requirements 11, 12, 13: Post-assessment calculates honest report with persistent records."""
-    at = AppTest.from_file("app.py")
+    at = AppTest.from_file(APP_PATH)
     at.run()
 
     # Set learner and start pre-assessment to have paired data
@@ -139,7 +140,7 @@ def test_post_assessment_and_progress_report():
 
 def test_offline_core_behavior_without_credentials():
     """Requirement 15: Application operates without LLM or voice API credentials."""
-    at = AppTest.from_file("app.py")
+    at = AppTest.from_file(APP_PATH)
     at.run()
     assert not at.exception
     # Welcome, pre-assessment, lessons all render from local content bank
