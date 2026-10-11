@@ -253,6 +253,138 @@ Calculates comprehensive learner progress across both assessments, concept maste
 
 ---
 
+### 2.5 Socratic Tutoring & Diagnostics
+
+#### `POST /api/v1/answers/{answer_id}/reasoning`
+Submits student reasoning for a previously recorded answer submission within an attempt.
+- **Headers:** `Authorization: Bearer <session_token>`
+- **Request Body:**
+  ```json
+  {
+    "response_text": "Because it has 4 equal pieces and 1 is shaded.",
+    "input_mode": "text"
+  }
+  ```
+- **Response (`201 Created`):**
+  ```json
+  {
+    "id": "res-uuid...",
+    "answer_submission_id": "ans-uuid...",
+    "sequence_no": 1,
+    "response_text": "Because it has 4 equal pieces and 1 is shaded.",
+    "input_mode": "text",
+    "created_at": "2026-10-11T13:45:00Z",
+    "diagnosis": {
+      "question_id": "Q_C1_PRE_01",
+      "is_correct": true,
+      "diagnosis_code": "NONE"
+    }
+  }
+  ```
+
+#### `POST /api/v1/tutoring/practice/diagnose` *(alias `POST /api/v1/tutor/messages`)*
+Diagnoses a practice question choice and student explanation using deterministic rules (M1–M4, S1, U1). Persists reasoning responses, updates tentative misconception hypotheses, and logs student/tutor dialogue turns.
+- **Headers:** `Authorization: Bearer <session_token>`
+- **Request Body:**
+  ```json
+  {
+    "question_code": "Q_C2_PRE_01",
+    "student_answer": "A",
+    "reasoning_text": "2/5 is larger because five is bigger than three.",
+    "input_mode": "text"
+  }
+  ```
+- **Response (`200 OK`):**
+  ```json
+  {
+    "question_id": "Q_C2_PRE_01",
+    "is_correct": false,
+    "diagnosis_code": "M1",
+    "reasoning_status": "invalid",
+    "certainty": "high",
+    "evidence": "Student compared denominators using whole-number magnitudes...",
+    "clarification_required": false,
+    "clarifying_question": null,
+    "next_activity_id": "A_FRACTION_STRIPS",
+    "student_feedback": "It looks like you might be thinking of denominators like regular whole numbers...",
+    "tutor_prompt": "It looks like you might be thinking of denominators like regular whole numbers..."
+  }
+  ```
+
+#### `POST /api/v1/tutoring/teach-back/evaluate` *(alias `POST /api/v1/tutor/teach-back`)*
+Evaluates learner explanations against the 5-point rubric (R1–R5: numerator/denominator roles, equal-sized parts, part size vs part count, comparison methods, equivalent fractions).
+- **Headers:** `Authorization: Bearer <session_token>`
+- **Request Body:**
+  ```json
+  {
+    "explanation": "The denominator tells the total number of equal parts in a whole, and numerator counts the pieces. All parts must be equal-sized fair shares..."
+  }
+  ```
+- **Response (`200 OK`):**
+  ```json
+  {
+    "rubric_id": "RUBRIC_FRACTIONS_01",
+    "content_version": "fractions-v1.0",
+    "earned_points": 5.0,
+    "possible_points": 5.0,
+    "coverage_percent": 100.0,
+    "overall_feedback": "Outstanding explanation! You clearly demonstrated all key fraction concepts.",
+    "criterion_results": [
+      {"criterion_id": "R1", "status": "demonstrated", "evidence": "..."},
+      {"criterion_id": "R2", "status": "demonstrated", "evidence": "..."}
+    ],
+    "recommended_concepts": [],
+    "clarification_required": false
+  }
+  ```
+
+#### `GET /api/v1/tutoring/history` *(alias `GET /api/v1/tutor/history`)*
+Retrieves ordered dialogue turns between learner and tutor for the current session.
+- **Headers:** `Authorization: Bearer <session_token>`
+- **Response (`200 OK`):**
+  ```json
+  [
+    {
+      "id": "int-1",
+      "sequence_no": 1,
+      "role": "student",
+      "interaction_type": "reasoning_response",
+      "content": "Answer: A. Reasoning: 2/5 is larger...",
+      "created_at": "2026-10-11T13:40:00Z"
+    },
+    {
+      "id": "int-2",
+      "sequence_no": 2,
+      "role": "tutor",
+      "interaction_type": "practice_feedback",
+      "content": "It looks like you might be thinking...",
+      "created_at": "2026-10-11T13:40:01Z"
+    }
+  ]
+  ```
+
+#### `GET /api/v1/tutoring/misconceptions` *(alias `GET /api/v1/tutor/misconceptions`)*
+Retrieves all recorded misconception hypotheses for the authenticated learner session.
+- **Headers:** `Authorization: Bearer <session_token>`
+- **Response (`200 OK`):**
+  ```json
+  [
+    {
+      "id": "hyp-1",
+      "code": "M1",
+      "concept_code": "C2",
+      "description": "It looks like you might be thinking of denominators like regular whole numbers...",
+      "confidence": 0.9,
+      "status": "tentative",
+      "evidence_answer_id": "ans-uuid...",
+      "created_at": "2026-10-11T13:40:00Z",
+      "updated_at": "2026-10-11T13:40:00Z"
+    }
+  ]
+  ```
+
+---
+
 ## 3. Legacy Route Compatibility
 The original `/api` endpoints continue to be available alongside `/api/v1` to guarantee total backward compatibility with the independent Streamlit application (`app.py`).
 - `GET /api/health`
