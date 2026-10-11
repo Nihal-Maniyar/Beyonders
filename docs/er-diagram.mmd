@@ -1,0 +1,169 @@
+erDiagram
+    learning_sessions ||--o{ assessment_attempts : "has"
+    learning_sessions ||--o{ tutoring_interactions : "records"
+    learning_sessions ||--o{ misconception_hypotheses : "tracks"
+    learning_sessions ||--o{ voice_events : "audits"
+
+    concepts ||--o{ lesson_concepts : "referenced_by"
+    concepts ||--o{ question_concepts : "referenced_by"
+    concepts ||--o{ misconception_hypotheses : "targets"
+
+    lessons ||--o{ lesson_concepts : "covers"
+
+    questions ||--o{ question_options : "has"
+    questions ||--o{ question_concepts : "maps_to"
+    questions ||--o{ assessment_questions : "assigned_to"
+    questions ||--o{ answer_submissions : "answered_by"
+
+    assessments ||--o{ assessment_questions : "contains"
+    assessments ||--o{ assessment_attempts : "attempted_as"
+
+    assessment_attempts ||--o{ answer_submissions : "contains"
+
+    answer_submissions ||--o{ reasoning_responses : "explained_by"
+    answer_submissions ||--o{ misconception_hypotheses : "evidenced_by"
+    answer_submissions }o--|| question_options : "selects"
+
+    tutoring_interactions ||--o{ voice_events : "synthesizes"
+
+    learning_sessions {
+        string id PK
+        string token_hash UK
+        string status
+        datetime created_at
+        datetime updated_at
+        datetime expires_at
+        datetime completed_at
+    }
+
+    concepts {
+        string id PK
+        string code UK
+        string name
+        string description
+        datetime created_at
+    }
+
+    lessons {
+        string id PK
+        string code UK
+        string title
+        string content
+        string status
+        int sequence_no
+        datetime created_at
+        datetime updated_at
+    }
+
+    lesson_concepts {
+        string lesson_id PK,FK
+        string concept_id PK,FK
+    }
+
+    questions {
+        string id PK
+        string code UK
+        string prompt
+        string question_type
+        string status
+        string explanation
+        datetime created_at
+        datetime updated_at
+    }
+
+    question_options {
+        string id PK
+        string question_id FK
+        string option_key
+        string option_text
+        boolean is_correct
+    }
+
+    question_concepts {
+        string question_id PK,FK
+        string concept_id PK,FK
+    }
+
+    assessments {
+        string id PK
+        string code
+        string title
+        string assessment_type
+        int version
+        boolean is_active
+        datetime created_at
+    }
+
+    assessment_questions {
+        string assessment_id PK,FK
+        string question_id PK,FK
+        int position
+        float points_possible
+    }
+
+    assessment_attempts {
+        string id PK
+        string session_id FK
+        string assessment_id FK
+        int attempt_no
+        string status
+        float raw_score
+        float max_score
+        datetime started_at
+        datetime completed_at
+    }
+
+    answer_submissions {
+        string id PK
+        string attempt_id FK
+        string question_id FK
+        string selected_option_id FK
+        string answer_text
+        boolean is_correct
+        float points_awarded
+        datetime submitted_at
+    }
+
+    reasoning_responses {
+        string id PK
+        string answer_submission_id FK
+        int sequence_no
+        string response_text
+        string input_mode
+        datetime created_at
+    }
+
+    tutoring_interactions {
+        string id PK
+        string session_id FK
+        int sequence_no
+        string role
+        string interaction_type
+        string content
+        datetime created_at
+    }
+
+    misconception_hypotheses {
+        string id PK
+        string session_id FK
+        string concept_id FK
+        string evidence_answer_id FK
+        string code
+        string description
+        float confidence
+        string status
+        datetime created_at
+        datetime updated_at
+    }
+
+    voice_events {
+        string id PK
+        string session_id FK
+        string interaction_id FK
+        string provider
+        string direction
+        string status
+        int duration_ms
+        string error_code
+        datetime created_at
+    }
