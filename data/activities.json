@@ -1,0 +1,71 @@
+{
+  "content_version": "fractions-v1.0",
+  "activities": [
+    {
+      "activity_id": "A_FRACTION_STRIPS",
+      "concept_id": "C2",
+      "title": "Visual Fraction Strips: Comparing Same-Size Wholes",
+      "purpose": "Remediate whole-number bias (M1) by visually demonstrating that dividing the same whole into more parts yields smaller individual pieces.",
+      "instructions": "Place two fraction strips of identical total length side-by-side. Cut strip A into 3 equal pieces (thirds) and strip B into 5 equal pieces (fifths). Observe that 1 third is noticeably longer than 1 fifth. Now highlight 2 thirds and 2 fifths: two thirds clearly covers more total length than two fifths.",
+      "visual_representation": "[Strip 1: |--- 1/3 ---|--- 1/3 ---|--- 1/3 ---|]\n[Strip 2: |- 1/5 -|- 1/5 -|- 1/5 -|- 1/5 -|- 1/5 -|]\nComparing 2/3 (covers 66.7%) vs 2/5 (covers 40%).",
+      "target_diagnosis_codes": ["M1"],
+      "question_ids": ["Q_C2_PRAC_01"],
+      "expected_learning_evidence": "Learner acknowledges that cutting into more pieces makes each piece smaller, overriding whole-number comparison of denominators."
+    },
+    {
+      "activity_id": "A_PART_SIZE_EXPLORER",
+      "concept_id": "C2",
+      "title": "Part-Size Explorer: Halves vs Eighths",
+      "purpose": "Remediate reversed denominator rule (M2) by showing that a larger denominator does not make a larger piece when the whole is fixed.",
+      "instructions": "Compare 1 slice of a pizza cut into 2 gigantic pieces (1/2) with 1 slice of the same pizza cut into 8 small pieces (1/8). Ask the learner: Would you rather have 1 slice from the pizza cut in 2 or 1 slice from the pizza cut in 8 if you want more pizza?",
+      "visual_representation": "[1/2 slice = 50% of whole] vs [1/8 slice = 12.5% of whole].",
+      "target_diagnosis_codes": ["M2"],
+      "question_ids": ["Q_C2_PRE_02"],
+      "expected_learning_evidence": "Learner explains that dividing among more people (higher denominator) reduces each person's share."
+    },
+    {
+      "activity_id": "A_NUMERATOR_DENOMINATOR_GRID",
+      "concept_id": "C2",
+      "title": "Common Denominator Grid",
+      "purpose": "Remediate numerator-only comparison (M3) by partitioning fractions to a shared common unit.",
+      "instructions": "When comparing fractions with different numerators and different denominators (like 3/7 vs 4/9), you cannot simply look at 3 vs 4 or 7 vs 9. Find a common denominator: 7 * 9 = 63. Convert 3/7 to 27/63 and 4/9 to 28/63. Now that unit sizes are identical (63rds), 28 parts is greater than 27 parts.",
+      "visual_representation": "3/7 = 27/63  vs  4/9 = 28/63 --> 28/63 > 27/63.",
+      "target_diagnosis_codes": ["M3"],
+      "question_ids": ["Q_C2_TRANSFER_01"],
+      "expected_learning_evidence": "Learner uses common denominator or benchmark reasoning rather than comparing numerators in isolation."
+    },
+    {
+      "activity_id": "A_PROPORTIONAL_SCALING",
+      "concept_id": "C3",
+      "title": "Proportional Scaling vs Addition Explorer",
+      "purpose": "Remediate invalid equivalent-fraction transformation (M4) by contrasting multiplication with addition.",
+      "instructions": "Take fraction 1/2 (value 0.50). If you add 1 to top and bottom: (1+1)/(2+1) = 2/3 (value 0.67). Notice the value changed from 50% to 67%! Now multiply top and bottom by 2: (1*2)/(2*2) = 2/4 (value 0.50). Multiplying scales both parts equally because 2/2 = 1.",
+      "visual_representation": "Addition alters the ratio: 1/2 != 2/3. Multiplication preserves the ratio: 1/2 == 2/4.",
+      "target_diagnosis_codes": ["M4"],
+      "question_ids": ["Q_C3_PRE_02", "Q_C3_PRAC_01"],
+      "expected_learning_evidence": "Learner demonstrates that equivalent fractions require proportional scaling (multiplication/division) by a non-zero factor."
+    },
+    {
+      "activity_id": "A_ARITHMETIC_RETRY",
+      "concept_id": "C3",
+      "title": "Calculation & Transcription Check",
+      "purpose": "Address arithmetic slip (S1) without assuming a conceptual misconception.",
+      "instructions": "Your mathematical logic was sound, but let's carefully check the arithmetic step. Re-calculate the multiplication or division step-by-step.",
+      "visual_representation": "Step 1: Check multiplication. Step 2: Verify simplification.",
+      "target_diagnosis_codes": ["S1"],
+      "question_ids": ["Q_C3_PRAC_01"],
+      "expected_learning_evidence": "Learner recalculates correctly and verifies their arithmetic."
+    },
+    {
+      "activity_id": "A_REASONING_CLARIFICATION",
+      "concept_id": "C1",
+      "title": "Reasoning Clarification Activity",
+      "purpose": "Collect evidence when student reasoning is ambiguous or missing (U1).",
+      "instructions": "Before we proceed, tell the tutor: What rule or mental picture did you use to choose that answer?",
+      "visual_representation": "Thinking bubble: Explain your step-by-step thinking.",
+      "target_diagnosis_codes": ["U1"],
+      "question_ids": ["Q_C1_PRE_01"],
+      "expected_learning_evidence": "Learner provides explanatory text enabling classification."
+    }
+  ]
+}

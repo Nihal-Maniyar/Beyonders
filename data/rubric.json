@@ -1,0 +1,72 @@
+{
+  "rubric_id": "RUBRIC_FRACTIONS_01",
+  "title": "Fractions Teach-Back Rubric",
+  "content_version": "fractions-v1.0",
+  "criteria": [
+    {
+      "criterion_id": "R1",
+      "concept_id": "C1",
+      "title": "Numerator & Denominator Meaning",
+      "description": "Explains that the denominator tells the total number of equal parts and numerator counts the parts considered.",
+      "keywords": ["numerator", "denominator", "bottom", "top", "parts", "whole", "divided into", "count"],
+      "levels": {
+        "demonstrated": "Clearly identifies both numerator (count of selected pieces) and denominator (total equal parts dividing the whole).",
+        "partial": "Mentions one component correctly or confuses top and bottom slightly.",
+        "incorrect": "Gives an erroneous definition (e.g. claims denominator is just an extra number).",
+        "not_demonstrated": "Does not discuss what numerator or denominator mean."
+      }
+    },
+    {
+      "criterion_id": "R2",
+      "concept_id": "C1",
+      "title": "Equal-Sized Parts Requirement",
+      "description": "Explains that parts of the whole must be identical in size (fair shares).",
+      "keywords": ["equal", "same size", "fair", "identical", "equal-sized", "evenly"],
+      "levels": {
+        "demonstrated": "Explicitly emphasizes that pieces must be of equal size or fair shares.",
+        "partial": "Implies equality without clearly stating it as a requirement.",
+        "incorrect": "Claims parts can be any random size without affecting fraction names.",
+        "not_demonstrated": "Does not mention equal-sized parts."
+      }
+    },
+    {
+      "criterion_id": "R3",
+      "concept_id": "C2",
+      "title": "Partition Count vs Part Size Relationship",
+      "description": "Understands that dividing a whole into more parts results in smaller individual parts.",
+      "keywords": ["more parts", "smaller pieces", "smaller slice", "fewer parts", "bigger pieces", "cut into more", "divide into more"],
+      "levels": {
+        "demonstrated": "Clearly states that dividing a whole into more pieces makes each piece smaller (e.g. 1/5 is smaller than 1/3).",
+        "partial": "Understands that denominators change part size but expresses the direction hesitantly.",
+        "incorrect": "Claims cutting into more pieces makes each piece bigger (reversed rule).",
+        "not_demonstrated": "Does not mention the relationship between number of parts and part size."
+      }
+    },
+    {
+      "criterion_id": "R4",
+      "concept_id": "C2",
+      "title": "Valid Comparison Method",
+      "description": "Compares fractions using a mathematically sound method (equal numerators, equal denominators, common denominators, or visual benchmark).",
+      "keywords": ["compare", "larger", "smaller", "greater", "common denominator", "benchmark", "cross multiply", "2/3 > 2/5", "same top", "same bottom"],
+      "levels": {
+        "demonstrated": "Applies a valid comparison method (e.g. same numerator reasoning, common denominator, or visual strips).",
+        "partial": "Compares fractions correctly but explanation of why the method works is incomplete.",
+        "incorrect": "Uses whole-number bias or compares numerators only while ignoring denominators.",
+        "not_demonstrated": "Does not demonstrate any fraction comparison method."
+      }
+    },
+    {
+      "criterion_id": "R5",
+      "concept_id": "C3",
+      "title": "Equivalent Fractions Concept",
+      "description": "Explains that equivalent fractions have equal value and are formed by multiplying/dividing by the same factor (not adding).",
+      "keywords": ["equivalent", "equal value", "same amount", "multiply", "divide", "scale", "same number top and bottom", "2/4 = 1/2"],
+      "levels": {
+        "demonstrated": "Explains that equivalent fractions represent the same quantity and are created by multiplying or dividing numerator and denominator by the same number.",
+        "partial": "Recognizes equivalent fractions by example (e.g. 1/2 = 2/4) without explaining proportional scaling.",
+        "incorrect": "Claims that adding the same number to top and bottom keeps fractions equivalent.",
+        "not_demonstrated": "Does not mention equivalent fractions."
+      }
+    }
+  ]
+}
