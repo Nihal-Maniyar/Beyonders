@@ -18,7 +18,8 @@ import {
   TeachBackEvaluation,
 } from '../types'
 
-const API_V1_BASE = '/api/v1'
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
+const API_V1_BASE = `${API_BASE_URL}/api/v1`
 const TOKEN_KEY = 'learnloop_session_token'
 
 export class ApiError extends Error {

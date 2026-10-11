@@ -27,6 +27,8 @@ async def lifespan(app: FastAPI):
     yield
 
 
+from learnloop.config import settings
+
 app = FastAPI(
     title="LearnLoop AI API",
     description="Adaptive Misconception Detector & Fractions Tutor API",
@@ -34,15 +36,23 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Enable CORS for local Vite development
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
+# Configure CORS origins (supports comma-separated list or * via CORS_ORIGINS)
+cors_origins_env = settings.cors_origins.strip()
+if cors_origins_env == "*":
+    allow_origins = ["*"]
+elif cors_origins_env:
+    allow_origins = [o.strip() for o in cors_origins_env.split(",") if o.strip()]
+else:
+    allow_origins = [
         "http://localhost:5173",
         "http://127.0.0.1:5173",
         "http://localhost:3000",
         "http://127.0.0.1:3000",
-    ],
+    ]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allow_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -77,10 +87,49 @@ app.include_router(v1_router)
 app.include_router(legacy_router)
 
 
+@app.get("/health", tags=["health"])
+def health():
+    """Root health check for cloud load balancers and deployment probes."""
+    return {
+        "status": "healthy",
+        "version": "1.0.0",
+        "app": "LearnLoop AI",
+    }
+
+
 @app.get("/")
 def root():
     return {
         "app": "LearnLoop AI API",
         "status": "online",
         "docs_url": "/docs",
+        "health_url": "/health",
+        "api_v1_url": "/api/v1",
     }
+
+
+# Optional unified deployment: serve built React frontend from /studio if frontend/dist exists
+_frontend_dist = Path(__file__).resolve().parent.parent.parent.parent / "frontend" / "dist"
+if _frontend_dist.exists() and (_frontend_dist / "index.html").exists():
+    from fastapi.responses import FileResponse
+    from fastapi.staticfiles import StaticFiles
+
+    _assets_dir = _frontend_dist / "assets"
+    if _assets_dir.exists():
+        app.mount("/assets", StaticFiles(directory=str(_assets_dir)), name="assets")
+
+    @app.get("/studio", response_class=FileResponse)
+    @app.get("/studio/{path:path}", response_class=FileResponse)
+    def serve_frontend_studio(path: str = ""):
+        return FileResponse(str(_frontend_dist / "index.html"))
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(
+        "learnloop.api.main:app",
+        host=settings.host,
+        port=settings.port,
+        reload=False,
+    )

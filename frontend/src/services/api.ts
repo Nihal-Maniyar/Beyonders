@@ -14,7 +14,8 @@ import {
 } from '../types'
 import { apiClient } from './api-client'
 
-const API_BASE = '/api'
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
+const API_BASE = `${API_BASE_URL}/api`
 
 async function handleResponse<T>(res: Response): Promise<T> {
   if (!res.ok) {

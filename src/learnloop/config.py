@@ -38,6 +38,11 @@ class Settings:
         self.elevenlabs_model_id: str = os.getenv("ELEVENLABS_MODEL_ID", "eleven_flash_v2_5")
         self.elevenlabs_stt_model_id: str = os.getenv("ELEVENLABS_STT_MODEL_ID", "scribe_v2")
 
+        # Hosting & CORS
+        self.cors_origins: str = os.getenv("CORS_ORIGINS", "")
+        self.port: int = int(os.getenv("PORT", "8000"))
+        self.host: str = os.getenv("HOST", "0.0.0.0")
+
     @property
     def has_llm(self) -> bool:
         return bool(self.llm_api_key and self.llm_provider)
