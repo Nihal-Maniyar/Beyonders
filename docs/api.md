@@ -385,6 +385,65 @@ Retrieves all recorded misconception hypotheses for the authenticated learner se
 
 ---
 
+### 2.6 ElevenLabs Voice Integration & Operational Telemetry
+
+#### `POST /api/v1/voice/synthesize`
+Synthesizes spoken tutor output using ElevenLabs via server-side proxy.
+- **Security:** Backend proxy hides all provider API keys.
+- **Timeout Bound:** Strict maximum 5.0 seconds.
+- **Fallback Guarantee:** Never crashes the learning flow. If unconfigured, timed out, or quota exhausted, returns `status: "fallback"` with full tutor text.
+- **Headers:** `Authorization: Bearer <session_token>`
+- **Request Body:**
+  ```json
+  {
+    "text": "Let's explore fraction strips together to see why 2/3 is bigger than 2/5.",
+    "interaction_id": "optional-interaction-uuid"
+  }
+  ```
+- **Response (`200 OK` - Success):**
+  ```json
+  {
+    "status": "succeeded",
+    "audio_base64": "UklGRi...",
+    "mime_type": "audio/mpeg",
+    "duration_ms": 782,
+    "fallback_text": "Let's explore fraction strips together...",
+    "message": "Speech synthesized successfully.",
+    "voice_event_id": "ve-uuid..."
+  }
+  ```
+- **Response (`200 OK` - Fallback Mode):**
+  ```json
+  {
+    "status": "fallback",
+    "audio_base64": null,
+    "mime_type": null,
+    "duration_ms": 0,
+    "fallback_text": "Let's explore fraction strips together...",
+    "message": "Voice synthesis unavailable: no ElevenLabs API key configured. Displaying tutor text.",
+    "voice_event_id": "ve-uuid..."
+  }
+  ```
+
+#### `GET /api/v1/voice/events`
+Returns operational telemetry and audit logs for voice synthesis requests under the authenticated session.
+- **Headers:** `Authorization: Bearer <session_token>`
+- **Response (`200 OK`):**
+  ```json
+  [
+    {
+      "id": "ve-uuid...",
+      "status": "failed",
+      "direction": "text_to_speech",
+      "duration_ms": 0,
+      "error_code": "VOICE_CREDENTIALS_MISSING",
+      "created_at": "2026-10-11T13:48:00Z"
+    }
+  ]
+  ```
+
+---
+
 ## 3. Legacy Route Compatibility
 The original `/api` endpoints continue to be available alongside `/api/v1` to guarantee total backward compatibility with the independent Streamlit application (`app.py`).
 - `GET /api/health`

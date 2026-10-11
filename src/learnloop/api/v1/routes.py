@@ -7,6 +7,7 @@ from learnloop.api.v1.lessons import router as lessons_router
 from learnloop.api.v1.progress import router as progress_router
 from learnloop.api.v1.sessions import router as sessions_router
 from learnloop.api.v1.tutoring import router as tutoring_router
+from learnloop.api.v1.voice import router as voice_router
 
 router = APIRouter(prefix="/api/v1")
 
@@ -15,6 +16,7 @@ router.include_router(lessons_router)
 router.include_router(assessments_router)
 router.include_router(progress_router)
 router.include_router(tutoring_router)
+router.include_router(voice_router)
 
 
 @router.get("/health", tags=["health"])

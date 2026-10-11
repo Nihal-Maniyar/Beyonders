@@ -35,6 +35,7 @@ class Settings:
         # Optional Voice integration
         self.elevenlabs_api_key: Optional[str] = os.getenv("ELEVENLABS_API_KEY")
         self.elevenlabs_voice_id: str = os.getenv("ELEVENLABS_VOICE_ID", "21m00Tcm4TlvDq8ikWAM")
+        self.elevenlabs_model_id: str = os.getenv("ELEVENLABS_MODEL_ID", "eleven_monolingual_v1")
 
     @property
     def has_llm(self) -> bool:
