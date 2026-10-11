@@ -179,3 +179,4 @@ Database seeding is managed by `src/learnloop/db/seed.py`:
 - Populates all questions and options from `data/questions.json`.
 - Configures default assessments (`FRACTIONS_PRE`, `FRACTIONS_POST`, `FRACTIONS_PRACTICE`).
 - **Idempotency:** Re-executing `seed_database()` detects existing records by unique code and will not duplicate records.
+

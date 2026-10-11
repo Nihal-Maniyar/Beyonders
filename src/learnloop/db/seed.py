@@ -269,3 +269,4 @@ if __name__ == "__main__":
     init_db()
     res = seed_database()
     print("Database seeding completed:", res)
+

@@ -84,3 +84,4 @@ def test_seed_database_is_idempotent(clean_db):
 
     assert clean_db.query(Question).count() == initial_q_count
     assert clean_db.query(Concept).count() == initial_c_count
+
