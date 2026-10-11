@@ -22,7 +22,6 @@ from learnloop.db.models import (
     ReasoningResponse,
     TutoringInteraction,
     VoiceEvent,
-    utc_now,
 )
 
 

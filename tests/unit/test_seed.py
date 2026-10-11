@@ -7,11 +7,9 @@ from sqlalchemy.orm import sessionmaker
 from learnloop.db.base import Base
 from learnloop.db.models import (
     Assessment,
-    AssessmentQuestion,
     Concept,
     Lesson,
     Question,
-    QuestionOption,
 )
 from learnloop.db.seed import seed_database
 
@@ -69,6 +67,7 @@ def test_seed_database_is_idempotent(clean_db):
     # First run
     stats1 = seed_database(clean_db)
     clean_db.commit()
+    assert stats1["concepts"] > 0
     initial_q_count = clean_db.query(Question).count()
     initial_c_count = clean_db.query(Concept).count()
 
@@ -84,4 +83,3 @@ def test_seed_database_is_idempotent(clean_db):
 
     assert clean_db.query(Question).count() == initial_q_count
     assert clean_db.query(Concept).count() == initial_c_count
-

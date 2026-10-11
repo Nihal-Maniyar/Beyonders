@@ -23,7 +23,6 @@ for 100% backward compatibility with the independent Streamlit backup applicatio
 
 import datetime
 import uuid
-from typing import Optional
 
 from sqlalchemy import (
     Boolean,
@@ -61,15 +60,15 @@ def generate_uuid() -> str:
 # 1. LEARNING SESSIONS (context.md Section 16 & 17)
 # =============================================================================
 
+
 class LearningSessionModel(Base):
     """Anonymous learning session tracking and lifecycle."""
+
     __tablename__ = "learning_sessions"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
     token_hash = Column(String(128), unique=True, nullable=True, index=True)
-    status = Column(
-        String(20), default="active", nullable=False
-    )  # active, completed, expired
+    status = Column(String(20), default="active", nullable=False)  # active, completed, expired
 
     # Lifecycle timestamps
     created_at = Column(DateTime, default=utc_now, nullable=False)
@@ -112,8 +111,10 @@ LearningSession = LearningSessionModel
 # 2. CONCEPTS (context.md Section 16 & 17)
 # =============================================================================
 
+
 class Concept(Base):
     """Fraction concepts registry (e.g. C1, C2, C3)."""
+
     __tablename__ = "concepts"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
@@ -123,7 +124,9 @@ class Concept(Base):
     created_at = Column(DateTime, default=utc_now, nullable=False)
 
     lessons = relationship("LessonConcept", back_populates="concept", cascade="all, delete-orphan")
-    questions = relationship("QuestionConcept", back_populates="concept", cascade="all, delete-orphan")
+    questions = relationship(
+        "QuestionConcept", back_populates="concept", cascade="all, delete-orphan"
+    )
     hypotheses = relationship("MisconceptionHypothesis", back_populates="concept")
 
 
@@ -131,8 +134,10 @@ class Concept(Base):
 # 3. LESSONS (context.md Section 16 & 17)
 # =============================================================================
 
+
 class Lesson(Base):
     """Instructional fraction lesson content."""
+
     __tablename__ = "lessons"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
@@ -151,12 +156,16 @@ class Lesson(Base):
 # 4. LESSON CONCEPTS JUNCTION (context.md Section 16 & 17)
 # =============================================================================
 
+
 class LessonConcept(Base):
     """Many-to-many relationship between lessons and concepts."""
+
     __tablename__ = "lesson_concepts"
 
     lesson_id = Column(String(36), ForeignKey("lessons.id", ondelete="CASCADE"), primary_key=True)
-    concept_id = Column(String(36), ForeignKey("concepts.id", ondelete="RESTRICT"), primary_key=True)
+    concept_id = Column(
+        String(36), ForeignKey("concepts.id", ondelete="RESTRICT"), primary_key=True
+    )
 
     lesson = relationship("Lesson", back_populates="concepts")
     concept = relationship("Concept", back_populates="lessons")
@@ -166,8 +175,10 @@ class LessonConcept(Base):
 # 5. QUESTIONS (context.md Section 16 & 17)
 # =============================================================================
 
+
 class Question(Base):
     """Question prompts, type, and pedagogical explanation."""
+
     __tablename__ = "questions"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
@@ -181,8 +192,12 @@ class Question(Base):
     created_at = Column(DateTime, default=utc_now, nullable=False)
     updated_at = Column(DateTime, default=utc_now, onupdate=utc_now, nullable=False)
 
-    options = relationship("QuestionOption", back_populates="question", cascade="all, delete-orphan")
-    concepts = relationship("QuestionConcept", back_populates="question", cascade="all, delete-orphan")
+    options = relationship(
+        "QuestionOption", back_populates="question", cascade="all, delete-orphan"
+    )
+    concepts = relationship(
+        "QuestionConcept", back_populates="question", cascade="all, delete-orphan"
+    )
     assessment_links = relationship("AssessmentQuestion", back_populates="question")
     answers = relationship("AnswerSubmission", back_populates="question")
 
@@ -191,8 +206,10 @@ class Question(Base):
 # 6. QUESTION OPTIONS (context.md Section 16 & 17)
 # =============================================================================
 
+
 class QuestionOption(Base):
     """Answer choices for multiple choice questions with internal correctness flags."""
+
     __tablename__ = "question_options"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
@@ -205,21 +222,25 @@ class QuestionOption(Base):
 
     question = relationship("Question", back_populates="options")
 
-    __table_args__ = (
-        UniqueConstraint("question_id", "option_key", name="uq_question_option_key"),
-    )
+    __table_args__ = (UniqueConstraint("question_id", "option_key", name="uq_question_option_key"),)
 
 
 # =============================================================================
 # 7. QUESTION CONCEPTS JUNCTION (context.md Section 16 & 17)
 # =============================================================================
 
+
 class QuestionConcept(Base):
     """Many-to-many relationship between questions and concepts."""
+
     __tablename__ = "question_concepts"
 
-    question_id = Column(String(36), ForeignKey("questions.id", ondelete="CASCADE"), primary_key=True)
-    concept_id = Column(String(36), ForeignKey("concepts.id", ondelete="RESTRICT"), primary_key=True)
+    question_id = Column(
+        String(36), ForeignKey("questions.id", ondelete="CASCADE"), primary_key=True
+    )
+    concept_id = Column(
+        String(36), ForeignKey("concepts.id", ondelete="RESTRICT"), primary_key=True
+    )
 
     question = relationship("Question", back_populates="concepts")
     concept = relationship("Concept", back_populates="questions")
@@ -229,8 +250,10 @@ class QuestionConcept(Base):
 # 8. ASSESSMENTS (context.md Section 16 & 17)
 # =============================================================================
 
+
 class Assessment(Base):
     """Versioned assessment definitions (pre, post, practice)."""
+
     __tablename__ = "assessments"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
@@ -249,17 +272,17 @@ class Assessment(Base):
     )
     attempts = relationship("AssessmentAttempt", back_populates="assessment")
 
-    __table_args__ = (
-        UniqueConstraint("code", "version", name="uq_assessment_code_version"),
-    )
+    __table_args__ = (UniqueConstraint("code", "version", name="uq_assessment_code_version"),)
 
 
 # =============================================================================
 # 9. ASSESSMENT QUESTIONS (context.md Section 16 & 17)
 # =============================================================================
 
+
 class AssessmentQuestion(Base):
     """Ordered question membership within an assessment version."""
+
     __tablename__ = "assessment_questions"
 
     assessment_id = Column(
@@ -274,22 +297,25 @@ class AssessmentQuestion(Base):
     assessment = relationship("Assessment", back_populates="questions")
     question = relationship("Question", back_populates="assessment_links")
 
-    __table_args__ = (
-        UniqueConstraint("assessment_id", "position", name="uq_assessment_position"),
-    )
+    __table_args__ = (UniqueConstraint("assessment_id", "position", name="uq_assessment_position"),)
 
 
 # =============================================================================
 # 10. ASSESSMENT ATTEMPTS (context.md Section 16 & 17)
 # =============================================================================
 
+
 class AssessmentAttempt(Base):
     """Session attempt record for an assessment."""
+
     __tablename__ = "assessment_attempts"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
     session_id = Column(
-        String(36), ForeignKey("learning_sessions.id", ondelete="RESTRICT"), nullable=False, index=True
+        String(36),
+        ForeignKey("learning_sessions.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
     )
     assessment_id = Column(
         String(36), ForeignKey("assessments.id", ondelete="RESTRICT"), nullable=False, index=True
@@ -322,13 +348,18 @@ class AssessmentAttempt(Base):
 # 11. ANSWER SUBMISSIONS (context.md Section 16 & 17)
 # =============================================================================
 
+
 class AnswerSubmission(Base):
     """Student answer submission for a question in an attempt."""
+
     __tablename__ = "answer_submissions"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
     attempt_id = Column(
-        String(36), ForeignKey("assessment_attempts.id", ondelete="RESTRICT"), nullable=False, index=True
+        String(36),
+        ForeignKey("assessment_attempts.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
     )
     question_id = Column(
         String(36), ForeignKey("questions.id", ondelete="RESTRICT"), nullable=False, index=True
@@ -359,25 +390,30 @@ class AnswerSubmission(Base):
 # 12. REASONING RESPONSES (context.md Section 16 & 17)
 # =============================================================================
 
+
 class ReasoningResponse(Base):
     """Student explanations associated with an answer submission."""
+
     __tablename__ = "reasoning_responses"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
     answer_submission_id = Column(
-        String(36), ForeignKey("answer_submissions.id", ondelete="RESTRICT"), nullable=False, index=True
+        String(36),
+        ForeignKey("answer_submissions.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
     )
     sequence_no = Column(Integer, default=1, nullable=False)
     response_text = Column(Text, nullable=False)
-    input_mode = Column(
-        String(30), default="text", nullable=False
-    )  # text, speech_transcript
+    input_mode = Column(String(30), default="text", nullable=False)  # text, speech_transcript
     created_at = Column(DateTime, default=utc_now, nullable=False)
 
     answer = relationship("AnswerSubmission", back_populates="reasonings")
 
     __table_args__ = (
-        UniqueConstraint("answer_submission_id", "sequence_no", name="uq_answer_reasoning_sequence"),
+        UniqueConstraint(
+            "answer_submission_id", "sequence_no", name="uq_answer_reasoning_sequence"
+        ),
         Index("idx_reasoning_answer", "answer_submission_id"),
     )
 
@@ -386,13 +422,18 @@ class ReasoningResponse(Base):
 # 13. TUTORING INTERACTIONS (context.md Section 16 & 17)
 # =============================================================================
 
+
 class TutoringInteraction(Base):
     """Ordered event and dialogue history for the tutoring loop."""
+
     __tablename__ = "tutoring_interactions"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
     session_id = Column(
-        String(36), ForeignKey("learning_sessions.id", ondelete="RESTRICT"), nullable=False, index=True
+        String(36),
+        ForeignKey("learning_sessions.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
     )
     sequence_no = Column(Integer, nullable=False)
     role = Column(String(20), nullable=False)  # student, tutor, system
@@ -413,17 +454,20 @@ class TutoringInteraction(Base):
 # 14. MISCONCEPTION HYPOTHESES (context.md Section 16 & 17)
 # =============================================================================
 
+
 class MisconceptionHypothesis(Base):
     """Tentative diagnostic hypotheses and evidence tracking."""
+
     __tablename__ = "misconception_hypotheses"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
     session_id = Column(
-        String(36), ForeignKey("learning_sessions.id", ondelete="RESTRICT"), nullable=False, index=True
+        String(36),
+        ForeignKey("learning_sessions.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
     )
-    concept_id = Column(
-        String(36), ForeignKey("concepts.id", ondelete="RESTRICT"), nullable=True
-    )
+    concept_id = Column(String(36), ForeignKey("concepts.id", ondelete="RESTRICT"), nullable=True)
     evidence_answer_id = Column(
         String(36), ForeignKey("answer_submissions.id", ondelete="RESTRICT"), nullable=True
     )
@@ -440,22 +484,25 @@ class MisconceptionHypothesis(Base):
     concept = relationship("Concept", back_populates="hypotheses")
     evidence_answer = relationship("AnswerSubmission", back_populates="hypotheses")
 
-    __table_args__ = (
-        Index("idx_misconceptions_session_status", "session_id", "status"),
-    )
+    __table_args__ = (Index("idx_misconceptions_session_status", "session_id", "status"),)
 
 
 # =============================================================================
 # 15. VOICE EVENTS (context.md Section 16 & 17)
 # =============================================================================
 
+
 class VoiceEvent(Base):
     """Operational telemetry and audit log for ElevenLabs voice requests."""
+
     __tablename__ = "voice_events"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
     session_id = Column(
-        String(36), ForeignKey("learning_sessions.id", ondelete="RESTRICT"), nullable=False, index=True
+        String(36),
+        ForeignKey("learning_sessions.id", ondelete="RESTRICT"),
+        nullable=False,
+        index=True,
     )
     interaction_id = Column(
         String(36), ForeignKey("tutoring_interactions.id", ondelete="SET NULL"), nullable=True
@@ -464,9 +511,7 @@ class VoiceEvent(Base):
     direction = Column(
         String(30), default="text_to_speech", nullable=False
     )  # text_to_speech, speech_to_text
-    status = Column(
-        String(20), nullable=False
-    )  # requested, succeeded, failed, cancelled
+    status = Column(String(20), nullable=False)  # requested, succeeded, failed, cancelled
     duration_ms = Column(Integer, nullable=True)
     error_code = Column(String(100), nullable=True)
     created_at = Column(DateTime, default=utc_now, nullable=False)
@@ -474,17 +519,17 @@ class VoiceEvent(Base):
     session = relationship("LearningSessionModel", back_populates="voice_events")
     interaction = relationship("TutoringInteraction", back_populates="voice_events")
 
-    __table_args__ = (
-        Index("idx_voice_events_session", "session_id", "created_at"),
-    )
+    __table_args__ = (Index("idx_voice_events_session", "session_id", "created_at"),)
 
 
 # =============================================================================
 # LEGACY MODELS PRESERVED FOR app.py STREAMLIT BACKUP
 # =============================================================================
 
+
 class LearnerModel(Base):
     """Legacy profile model for Streamlit demo runner."""
+
     __tablename__ = "learners"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
@@ -510,6 +555,7 @@ class LearnerModel(Base):
 
 class AttemptModel(Base):
     """Legacy practice attempt model for Streamlit runner."""
+
     __tablename__ = "attempts"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
@@ -546,6 +592,7 @@ class AttemptModel(Base):
 
 class AssessmentRunModel(Base):
     """Legacy assessment run model for Streamlit runner."""
+
     __tablename__ = "assessment_runs"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
@@ -568,6 +615,7 @@ class AssessmentRunModel(Base):
 
 class AssessmentResponseModel(Base):
     """Legacy assessment response model for Streamlit runner."""
+
     __tablename__ = "assessment_responses"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
@@ -587,6 +635,7 @@ class AssessmentResponseModel(Base):
 
 class TeachBackSubmissionModel(Base):
     """Legacy teach-back submission model for Streamlit runner."""
+
     __tablename__ = "teachback_submissions"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
@@ -611,6 +660,7 @@ class TeachBackSubmissionModel(Base):
 
 class TeachBackEvaluationModel(Base):
     """Legacy teach-back evaluation model for Streamlit runner."""
+
     __tablename__ = "teachback_evaluations"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)
@@ -634,6 +684,7 @@ class TeachBackEvaluationModel(Base):
 
 class ConceptMasteryModel(Base):
     """Legacy mastery snapshot model for Streamlit runner."""
+
     __tablename__ = "concept_mastery"
 
     learner_id = Column(String(36), ForeignKey("learners.id", ondelete="CASCADE"), primary_key=True)
@@ -654,6 +705,7 @@ class ConceptMasteryModel(Base):
 
 class ReviewTaskModel(Base):
     """Legacy spaced review task model for Streamlit runner."""
+
     __tablename__ = "review_tasks"
 
     id = Column(String(36), primary_key=True, default=generate_uuid)

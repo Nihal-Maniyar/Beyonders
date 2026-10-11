@@ -5,8 +5,7 @@ question_concepts, assessments, and assessment_questions from verified content b
 """
 
 import json
-from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
 from sqlalchemy.orm import Session
 
@@ -207,12 +206,12 @@ def _execute_seed(session: Session) -> Dict[str, int]:
             "title": "Fractions Progress Post-Assessment",
             "type": "post",
             "question_codes": [
-                "Q_C1_POST_01",
-                "Q_C1_POST_02",
-                "Q_C2_POST_01",
-                "Q_C2_POST_02",
-                "Q_C3_POST_01",
-                "Q_C3_POST_02",
+                "Q_C1_PRE_01",
+                "Q_C1_PRE_02",
+                "Q_C2_PRE_01",
+                "Q_C2_PRE_02",
+                "Q_C3_PRE_01",
+                "Q_C3_PRE_02",
             ],
         },
         {
@@ -229,11 +228,7 @@ def _execute_seed(session: Session) -> Dict[str, int]:
     ]
 
     for a_data in assessments_meta:
-        assessment = (
-            session.query(Assessment)
-            .filter_by(code=a_data["code"], version=1)
-            .first()
-        )
+        assessment = session.query(Assessment).filter_by(code=a_data["code"], version=1).first()
         if not assessment:
             assessment = Assessment(
                 code=a_data["code"],
@@ -246,7 +241,11 @@ def _execute_seed(session: Session) -> Dict[str, int]:
             session.flush()
             stats["assessments"] += 1
 
-            # Order questions in assessment
+        # Ensure questions are populated for assessment if missing
+        existing_aq_count = (
+            session.query(AssessmentQuestion).filter_by(assessment_id=assessment.id).count()
+        )
+        if existing_aq_count == 0:
             pos = 1
             for q_code in a_data["question_codes"]:
                 q_obj = question_map.get(q_code)
@@ -269,4 +268,3 @@ if __name__ == "__main__":
     init_db()
     res = seed_database()
     print("Database seeding completed:", res)
-

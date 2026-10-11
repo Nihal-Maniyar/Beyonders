@@ -26,6 +26,12 @@ class Settings:
         self.llm_api_key: Optional[str] = os.getenv("LLM_API_KEY")
         self.llm_model: Optional[str] = os.getenv("LLM_MODEL")
 
+        # Anonymous session security
+        self.session_token_pepper: str = os.getenv(
+            "SESSION_TOKEN_PEPPER", "learnloop-default-secret-pepper-change-in-prod"
+        )
+        self.session_expiry_hours: int = int(os.getenv("SESSION_EXPIRY_HOURS", "24"))
+
         # Optional Voice integration
         self.elevenlabs_api_key: Optional[str] = os.getenv("ELEVENLABS_API_KEY")
         self.elevenlabs_voice_id: str = os.getenv("ELEVENLABS_VOICE_ID", "21m00Tcm4TlvDq8ikWAM")
