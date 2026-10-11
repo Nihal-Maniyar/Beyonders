@@ -4,7 +4,7 @@ from typing import Optional
 
 from sqlalchemy.orm import Session
 
-from learnloop.db.models import LearnerModel
+from learnloop.db.models import LearnerModel, LearningSessionModel
 
 
 class LearnerRepository:
@@ -27,3 +27,19 @@ class LearnerRepository:
             self.session.add(learner)
             self.session.flush()
         return learner
+
+    def create_learning_session(
+        self,
+        learner_id: str,
+        chapter_id: str = "CH_FRACTIONS_01",
+        content_version: str = "fractions-v1.0",
+    ) -> LearningSessionModel:
+        session_obj = LearningSessionModel(
+            learner_id=learner_id,
+            chapter_id=chapter_id,
+            content_version=content_version,
+            current_stage="WELCOME",
+        )
+        self.session.add(session_obj)
+        self.session.flush()
+        return session_obj

@@ -1,10 +1,14 @@
 """Reusable Streamlit UI components for LearnLoop AI."""
+
 import html
-from typing import Dict, List
+from typing import List
+
 import streamlit as st
+
 from learnloop.domain.mastery_rules import MasteryStatus
 from learnloop.schemas.assessment import PrePostReport
 from learnloop.schemas.teachback import CriterionResult, CriterionStatus
+
 
 def render_fraction_strips(fraction_a: str = "2/3", fraction_b: str = "2/5") -> None:
     """Render side-by-side fraction strips comparing two fractions."""
