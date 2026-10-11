@@ -67,7 +67,7 @@ DEFAULT_ACTIVITY_MAP = {
 }
 
 
-def normalize_answer(ans: str) -> str:
+def normalize_answer(ans: Optional[str]) -> str:
     """Normalize answer string for exact or option matching."""
     if not ans:
         return ""
@@ -78,11 +78,15 @@ def normalize_answer(ans: str) -> str:
     return cleaned.upper()
 
 
-def is_answer_correct(student_answer: str, correct_answer: str, accepted_answers: list) -> bool:
+def is_answer_correct(
+    student_answer: Optional[str], correct_answer: str, accepted_answers: list
+) -> bool:
     """Check correctness against question key."""
+    if not student_answer:
+        return False
     norm_student = normalize_answer(student_answer)
     norm_correct = normalize_answer(correct_answer)
-    if norm_student == norm_correct:
+    if norm_student and norm_student == norm_correct:
         return True
 
     student_lower = student_answer.strip().lower()
@@ -260,10 +264,12 @@ def classify_reasoning(
 
     # Pattern M3: Numerator-only comparison
     m3_patterns = [
-        r"\bonly\s*(looked\s*at|compared)\s*(the\s*)?numerator\b",
-        r"\bonly\s*(the\s*)?top\s*number\b",
-        r"\btop\s*number\s*is\s*(bigger|larger)\b",
-        r"\bignored\s*(the\s*)?denominator\b",
+        r"\bonly\s*(looked\s*at|compared)\s*(the\s*)?numerators?\b",
+        r"\bcompared\s*(only|just)\s*(the\s*)?numerators?\b",
+        r"\bonly\s*(the\s*)?top\s*numbers?\b",
+        r"\btop\s*numbers?\s*(is|are)\s*(bigger|larger|greater)\b",
+        r"\bnumerators?\s*(is|are)?\s*(bigger|larger|greater)\b",
+        r"\bignored\s*(the\s*)?denominators?\b",
     ]
     for pat in m3_patterns:
         if re.search(pat, text):
