@@ -138,11 +138,10 @@ export type MasteryStatus = 'not_assessed' | 'developing' | 'mastered'
 export interface ConceptMastery {
   concept_id: string
   status: MasteryStatus
+  score: number
   evidence_attempt_count: number
-  distinct_questions_count: number
-  transfer_attempted: boolean
-  transfer_mastered: boolean
-  active_misconceptions: string[]
+  distinct_question_count: number
+  transfer_passed: boolean
 }
 
 export interface ReviewTask {

@@ -1,9 +1,13 @@
-# LearnLoop AI — Adaptive AI Tutor & Misconception Detector
+# LearnLoop AI — Adaptive Fractions Learning Studio
 
 > **VORTEXA 3.0 · Problem Statement E-01**  
 > **Chapter Focus:** Comparing Fractions (Grade 4–6 Mathematics, CCSS.MATH.CONTENT.4.NF.A.2)
 
-LearnLoop AI is an educational technology system that investigates **how students reason**, identifies specific mathematical misconceptions, provides targeted remedial activities, evaluates student teach-backs against explicit rubrics, and quantifies mastery growth across pre- and post-assessments.
+LearnLoop AI is an educational technology system that investigates **how students reason**, identifies specific mathematical misconceptions, provides targeted visual remediation activities, evaluates student teach-backs against explicit rubrics, and quantifies mastery growth across pre- and post-assessments.
+
+The repository provides two independent, fully functional frontend options:
+1. **Primary Frontend:** Modern, tactile **React + Vite** learning studio located in `frontend/`, communicating with a FastAPI backend adapter.
+2. **Preserved Backup:** Original interactive **Streamlit** notebook application in `app.py`.
 
 ---
 
@@ -18,6 +22,7 @@ LearnLoop AI is an educational technology system that investigates **how student
   - **S1**: Arithmetic Slip (correct conceptual strategy with calculation error)
   - **U1**: Unclear / Ambiguous Reasoning (triggers Socratic clarifying questions)
   - **NONE**: Sound mathematical reasoning
+- **Interactive Visual Fraction Models**: Tactile, accessible SVG/CSS fraction bars and side-by-side comparative strips with identical-length wholes, letting students visually explore why thirds are wider than fifths ($2/3 > 2/5$).
 - **Rubric-Grounded Teach-Back Evaluation**: Grades student explanations against 5 standardized criteria ($R1$–$R5$) with point awards (1.0 demonstrated, 0.5 partial, 0.0 incorrect/not demonstrated) and percentage coverage.
 - **Mastery Tracking**: Evaluates skill acquisition based on evidence:
   - Requires at least 2 distinct correct questions and successful transfer item execution to achieve `MASTERED`.
@@ -37,8 +42,23 @@ beyonders/
 │   ├── questions.json                  # Pre/post/practice questions with misconception maps
 │   ├── activities.json                 # Remediation activities mapped to diagnosis codes
 │   └── rubric.json                     # Teach-back rubric criteria (R1–R5)
+├── frontend/                           # PRIMARY: React + Vite + TypeScript Frontend
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── common/                 # Button, Card, Badge, Callout
+│   │   │   ├── visuals/                # FractionBar, FractionCompare, FractionExplorer
+│   │   │   ├── layout/                 # Header, StageStepper, AppShell
+│   │   │   └── views/                  # 8 Stage Views (Welcome, PreTest, Lesson, Practice, etc.)
+│   │   ├── design/                     # theme.css (tactile studio tokens, typography)
+│   │   ├── services/api.ts             # Type-safe API client communicating with backend
+│   │   └── types/index.ts              # TypeScript schemas matching backend models
+│   ├── package.json
+│   └── vite.config.ts                  # Vite config with /api proxy to FastAPI
 ├── src/
 │   └── learnloop/
+│       ├── api/                        # FastAPI REST API adapter for React frontend
+│       │   ├── main.py                 # App entry point, CORS middleware, lifespan
+│       │   └── routes.py               # REST endpoints for assessment, diagnosis, teach-back
 │       ├── config.py                   # Pydantic v2 application settings
 │       ├── content/                    # Content loader and integrity validator
 │       ├── db/                         # SQLAlchemy 2.0 Base, engine, and ORM models
@@ -51,10 +71,11 @@ beyonders/
 │       ├── services/                   # Application orchestration services
 │       └── ui/                         # Streamlit UI theme and notebook components
 ├── tests/
+│   ├── api/                            # FastAPI endpoint and student journey tests
 │   ├── unit/                           # Isolated domain rule and content tests
 │   ├── integration/                    # Service, persistence isolation, and session tests
 │   └── ui/                             # Headless AppTest UI workflow tests
-├── app.py                              # Main interactive Streamlit application
+├── app.py                              # BACKUP: Preserved Streamlit interactive app
 ├── requirements.txt                    # Production runtime dependencies
 ├── requirements-dev.txt                # Development and testing dependencies
 ├── pyproject.toml                      # Project metadata, pytest, and ruff configuration
@@ -67,6 +88,7 @@ beyonders/
 
 ### 1. Prerequisites
 - Python 3.9+ (tested on Python 3.9, 3.10, and 3.11)
+- Node.js 18+ and npm
 - Git
 
 ### 2. Environment Setup
@@ -76,49 +98,75 @@ beyonders/
 git clone https://github.com/Nihal-Maniyar/Beyonders.git
 cd Beyonders
 
-# Create and activate a virtual environment
+# Create and activate Python virtual environment
 python3 -m venv .venv
 source .venv/bin/activate
 
-# Install dependencies
+# Install Python backend dependencies
 pip install -r requirements-dev.txt
+
+# Install frontend dependencies
+cd frontend && npm install && cd ..
 ```
 
-### 3. Run the Interactive Application
+---
+
+## 💻 Running the Applications
+
+### Option A: Primary React + Vite Application (Recommended)
+
+1. **Start the FastAPI Backend** (Terminal 1):
+   ```bash
+   uvicorn src.learnloop.api.main:app --port 8000 --reload
+   ```
+   *FastAPI docs will be available at `http://localhost:8000/docs`.*
+
+2. **Start the React Frontend** (Terminal 2):
+   ```bash
+   cd frontend
+   npm run dev
+   ```
+   *Open your browser at **`http://localhost:5173`**.*
+
+---
+
+### Option B: Preserved Streamlit Backup Application
+
+To run the original self-contained Streamlit application:
 
 ```bash
-# Start Streamlit application
 streamlit run app.py
 ```
+*Open your browser at **`http://localhost:8501`**.*
 
-The app will open automatically in your browser at `http://localhost:8501`.
+Both applications connect to the same educational domain engine and SQLite persistence layer.
 
 ---
 
 ## 🧪 Running Tests & Quality Checks
 
-The repository includes a comprehensive 39-test suite spanning unit, integration, and UI acceptance flows.
+The repository includes a comprehensive 46-test suite spanning API, unit, integration, and UI acceptance flows, plus frontend build verification.
 
-### Run All Tests
+### Run All Python Tests
 ```bash
 pytest -v
 ```
 
-### Run Tests with Coverage
+### Run Python Tests with Coverage
 ```bash
 pytest --cov=src --cov-report=term-missing
 ```
 
-### Run Linter and Formatter
+### Run Python Linter and Formatter
 ```bash
-# Check code style and imports
 ruff check .
-
-# Check formatting
 ruff format --check .
+```
 
-# Auto-fix formatting if needed
-ruff format .
+### Build & Type-Check Frontend
+```bash
+cd frontend
+npm run build
 ```
 
 ---
@@ -144,5 +192,5 @@ ruff format .
 
 ## 🛡️ Limitations & Phase Scope
 
-- **Phase 0–5 Complete**: Baseline content bank, domain diagnosis, rubric evaluator, database persistence, interactive 8-stage UI workflow, comprehensive edge-case tests, and CI automation.
+- **Phases 0–5 Complete**: Baseline content bank, domain diagnosis, rubric evaluator, database persistence, interactive 8-stage UI workflows (React and Streamlit), comprehensive edge-case tests, and CI automation.
 - **Phase 6 AI Enhancements Deferred**: Optional LLM-assisted conversational expansion (Anthropic/OpenAI/Gemini) and ElevenLabs voice narration are architecturally isolated and deferred to Phase 6. The entire educational platform is fully functional and self-contained without them.

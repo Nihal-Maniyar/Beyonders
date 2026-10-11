@@ -3,7 +3,7 @@ import { Card } from '../common/Card'
 import { Button } from '../common/Button'
 import { Badge } from '../common/Badge'
 import { Callout } from '../common/Callout'
-import { PrePostReport, ReviewTask } from '../../types'
+import { PrePostReport, ReviewTask, ConceptMastery } from '../../types'
 import { api } from '../../services/api'
 
 export interface ProgressReportViewProps {
@@ -16,7 +16,7 @@ export const ProgressReportView: React.FC<ProgressReportViewProps> = ({
   onStartFreshSession,
 }) => {
   const [report, setReport] = useState<PrePostReport | null>(null)
-  const [mastery, setMastery] = useState<Record<string, any>>({})
+  const [mastery, setMastery] = useState<Record<string, ConceptMastery>>({})
   const [reviews, setReviews] = useState<ReviewTask[]>([])
   const [loading, setLoading] = useState(true)
 

@@ -261,11 +261,10 @@ def get_learner_mastery(
         cid: {
             "concept_id": m.concept_id,
             "status": m.status.value,
+            "score": m.score,
             "evidence_attempt_count": m.evidence_attempt_count,
-            "distinct_questions_count": len(m.distinct_question_ids),
-            "transfer_attempted": m.transfer_attempted,
-            "transfer_mastered": m.transfer_mastered,
-            "active_misconceptions": list(m.active_misconceptions),
+            "distinct_question_count": m.distinct_question_count,
+            "transfer_passed": m.transfer_passed,
         }
         for cid, m in masteries.items()
     }
