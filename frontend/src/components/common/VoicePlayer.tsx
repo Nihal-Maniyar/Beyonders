@@ -194,3 +194,4 @@ export const VoicePlayer: React.FC<VoicePlayerProps> = ({
     </div>
   )
 }
+
